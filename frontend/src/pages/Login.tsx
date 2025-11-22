@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
+import { useAuth, type User } from '../context/AuthContext';
 import { Lock, Mail } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -14,10 +14,14 @@ const Login = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const { data } = await axios.post('http://localhost:5000/api/auth/login', {
-                email,
-                password,
-            });
+            const { data } = await axios.post<User>(
+                `${import.meta.env.VITE_API_URL}/auth/login`,
+                {
+                    email,
+                    password,
+                }
+            );
+
             login(data);
             toast.success('Login successful!');
             navigate('/');
@@ -25,6 +29,7 @@ const Login = () => {
             toast.error(error.response?.data?.message || 'Login failed');
         }
     };
+
 
     return (
         <div className="min-h-screen bg-slate-100 flex items-center justify-center">
